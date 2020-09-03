@@ -4,62 +4,83 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Proyecto1LinQ
+namespace LINQ
 {
+   
     public class Menu
     {
-        MethodsRepository repository = new MethodsRepository();
-        public void ShowMenu()
+        delegate void controlaMetodos();
+        static MethodsRepository repository = new MethodsRepository();
+        private string str_input;
+
+
+        Dictionary<int, string> opciones = new Dictionary<int, string>();
+        string yes_no = "";
+        public Menu()
         {
-            bool yesConverted = false;
-            int opcion;
+            AddedOptions();
+        }
+
+        public void AddedOptions()
+        {
+            opciones.Add(1, $"Estudiante con puntuacion mayor ");
+            opciones.Add(2, $"Estudiante puntuacion mayor a 90 e inferior a 80 ");
+            opciones.Add(3, $"Apellidos de forma ascendente  ");
+            opciones.Add(4, $"Apellidos de forma descendente ");
+            opciones.Add(5, $"Estudiantes agrupados segun su key ");
+            opciones.Add(6, $"Sumatoria de todos los examenes ");
+            opciones.Add(7, $"Promedio de toda la clase ");
+            opciones.Add(8, $"Consulta con apellido ");
+            opciones.Add(9, $"Estudiantes con promedio mayor a 321.5 ");
+            opciones.Add(10, $"Crear nueva lista de calificaciones ");
+            opciones.Add(11, $"Devolver nuevo listado de alumnos con informacion de curso ");
+            opciones.Add(12, $"Devolver una lista de curso segun su idCurso ");
+            opciones.Add(13, "Salir");
+
+        }
+
+        public void AddOption(int index, string history)
+        {
+            opciones.Add(index, history);
+        }
+         public   void EjecutarMenu()
+         {
+ 
+            bool seguir = false;
             do
             {
-                 Console.WriteLine($"1.Mostrar paquetes con velocidad superior a 8MB \n \n" +
-                 $"<<Clientes y paquetes de internet>> \n 2.Mostrar informacion de paquete de cliente \n " +
-                 $"3.Mostrar informacion de cliente con id = 22 y id = 27 \n \n" +
-                 $"<<Paquetes de internet y sectores>> \n 4.Mostrar informacion de sector en todos los paquetes \n " +
-                 $"5.Mostrar informacion de clientes en todos los sectores \n " +
-                 $"6.Mostrar informacion de clientes para el sector de negocios \n \n" +
-                 $"<<Filtro por fecha>> \n 7.Mostrar informacion de cliente para sector privado cuya fecha de afiliacion fue en 2006 \n " +
-                 $"8.Mostrar informacion de cliente para el sector de negocios en rango definido por el usuario \n \n" +
-                 $"<<Bono>> \n 9. Contar numero de letras que se repiten en una palabra \n 10.Salir");               
-                yesConverted = Int32.TryParse(Console.ReadLine(), out opcion);
-                Console.Clear();
-                if ( opcion < 0  || !yesConverted || opcion > 10 ) { 
-                    if(yesConverted == false)
-                    {
-                        Console.WriteLine("Ingreso un letra \n Digite una de las opciones mostradas \n" +
-                                          "Oprima cualquier tecla para continuar...");
-                    }else if(opcion < 0)
-                    {
-                        Console.WriteLine("Ingreso un numero negativo \n Digite una de las opciones mostradas \n" +
-                                          "Oprima cualquier tecla para continuar...");
-                    }else if(opcion > 10)//Para que sea dinamico puede contener el numero de elementos que coontiene el diccionario
-                    {
-                        Console.WriteLine("Ingreso una opcion que no existe \n Oprima cuaquier tecla para continuar...");
-                    }
-                    Console.ReadKey();
-                    
-                continue;
-
-                }
-                else
+                bool yesConverted = true;
+                do
                 {
-                    repository.ExecuteMethod(opcion);
-                    Console.WriteLine("Desea continuar... y/n ?");
-                    string yes_no = Console.ReadLine();
-                    if(yes_no.Equals("Y") || yes_no.Equals("y"))
+                    int input;
+                    foreach(var opcion in opciones)
                     {
-                        yesConverted = false;
+                        Console.WriteLine($"{opcion.Key}. {opcion.Value}");
                     }
-                    else if (yes_no.Equals("N") || yes_no.Equals("n")) {
-                        Console.WriteLine("Termino la ejecucion.");
+
+                    str_input = Console.ReadLine();
+                    yesConverted = Int32.TryParse(str_input, out input);
+                    Console.Clear();
+                    if (input > 0 && input < 13)
+                    {
+                        InvokeMethod(input);
+                    }else if(input == 13)
+                    {
+                        Environment.Exit(0);
                     }
-      
-                }
-               
-            } while (opcion < 0 || !yesConverted || opcion > 10);
+                } while (yesConverted);
+                
+                Console.WriteLine("Desea continuar?: y/n ---> ");
+                yes_no = Console.ReadLine();
+                seguir = (string.Equals(yes_no, "Y", StringComparison.OrdinalIgnoreCase)) ? true:false;
+                Console.Clear();
+            } while (seguir && !yes_no.Equals("n"));
         }
+        
+         public  void InvokeMethod(int index)
+        {
+              repository.addedRepositoryMethods[index].Invoke();
+        }
+
     }
 }
